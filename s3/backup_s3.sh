@@ -3,7 +3,7 @@
 DIR=$1
 BUCKET=$2
 BACKUP_NAME="backup_$(date +%Y%m%d_%H%M%S).tar.gz"
-LOG_FILE="../logs/backup.log"
+LOG_FILE="$(dirname "$0")/../logs/backup.log"
 
 if [ -z "$DIR" ] || [ -z "$BUCKET" ]; then
     echo "Uso: ./backup_s3.sh <directorio> <nombre-bucket>"

@@ -2,3 +2,5 @@
 [Mon Apr  6 14:11:26 UTC 2026] Respaldo exitoso: backup_20260406_141125.tar.gz
 [Mon Apr  6 14:13:33 UTC 2026] Iniciando respaldo de ../ec2...
 [Mon Apr  6 14:13:33 UTC 2026] Respaldo exitoso: backup_20260406_141333.tar.gz
+[Mon Apr  6 14:50:28 UTC 2026] Iniciando respaldo de ./ec2 en backup-roberto-naredo-2026
+[Mon Apr  6 14:50:29 UTC 2026] Éxito
