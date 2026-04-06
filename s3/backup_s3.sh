@@ -1,23 +1,21 @@
 #!/bin/bash
-
-# Configuración - ASEGÚRATE QUE EL NOMBRE DEL BUCKET COINCIDA CON EL QUE CREASTE
-BUCKET="s3://backup-roberto-naredo-2026"
-SOURCE_DIR="../ec2" 
+# Parámetros: $1=Directorio, $2=Bucket
+DIR=$1
+BUCKET=$2
 BACKUP_NAME="backup_$(date +%Y%m%d_%H%M%S).tar.gz"
 LOG_FILE="../logs/backup.log"
 
-echo "[$(date)] Iniciando respaldo de $SOURCE_DIR..." >> $LOG_FILE
+if [ -z "$DIR" ] || [ -z "$BUCKET" ]; then
+    echo "Uso: ./backup_s3.sh <directorio> <nombre-bucket>"
+    exit 1
+fi
 
-# 1. Comprimir la carpeta (feat: compresión de archivos)
-tar -czf $BACKUP_NAME $SOURCE_DIR
+echo "[$(date)] Iniciando respaldo de $DIR en $BUCKET" >> $LOG_FILE
+tar -czf $BACKUP_NAME $DIR && aws s3 cp $BACKUP_NAME s3://$BUCKET/
 
-# 2. Subir a S3 usando AWS CLI (feat: subida a S3)
-aws s3 cp $BACKUP_NAME $BUCKET/
-
-# 3. Registro de logs (feat: generación de logs)
 if [ $? -eq 0 ]; then
-    echo "[$(date)] Respaldo exitoso: $BACKUP_NAME" >> $LOG_FILE
+    echo "[$(date)] Éxito" >> $LOG_FILE
     rm $BACKUP_NAME
 else
-    echo "[$(date)] ERROR en el respaldo" >> $LOG_FILE
+    echo "[$(date)] Error" >> $LOG_FILE
 fi
