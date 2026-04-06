@@ -1,27 +1,26 @@
 #!/bin/bash
-# Uso: ./deploy.sh <accion> <id_instancia> <directorio> <bucket>
 
-ACCION=$1
-ID_INSTANCIA=$2
-DIR_BACKUP=$3
-BUCKET=$4
+# Cargar variables de configuración (Parte 7)
+if [ -f config/config.env ]; then
+    source config/config.env
+else
+    echo "❌ Error: Archivo config/config.env no encontrado."
+    exit 1
+fi
 
-echo "--- 🚀 Iniciando Orquestación DevOps ---"
+# Parámetros (si se pasan por terminal, sobrescriben al .env)
+ACCION=${1:-"listar"}
+ID_INSTANCIA=${2:-$INSTANCE_ID}
+DIR_BACKUP=${3:-$DIRECTORY}
+BUCKET=${4:-$BUCKET_NAME}
 
-# Paso 1: Ejecutar script de Python (Gestión EC2)
-echo "[1/2] Gestionando instancia EC2..."
+echo "--- 🚀 Iniciando Orquestación (Config Cargada) ---"
+echo "Usando Bucket: $BUCKET"
+
+# 1. Gestión EC2
 python3 ec2/gestionar_ec2.py $ACCION $ID_INSTANCIA
-if [ $? -ne 0 ]; then
-    echo "❌ Error en el paso de EC2. Abortando."
-    exit 1
-fi
 
-# Paso 2: Ejecutar script de Bash (Respaldo S3)
-echo "[2/2] Iniciando respaldo en S3..."
+# 2. Respaldo S3
 bash s3/backup_s3.sh $DIR_BACKUP $BUCKET
-if [ $? -ne 0 ]; then
-    echo "❌ Error en el paso de S3."
-    exit 1
-fi
 
-echo "--- ✅ Proceso Finalizado Exitosamente ---"
+echo "--- ✅ Proceso Finalizado ---"
